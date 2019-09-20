@@ -1,5 +1,4 @@
 #include "iostream"
-
 using namespace std;
 
 template <typename T>
@@ -223,17 +222,109 @@ public:
     }
     void output()
     {
-        LinkNode<T> *current = head->next;
-        cout << "{ ";
-        while (current != NULL)
+        LinkNode<T> *p = head->next;
+        if (p == NULL)
+            cout << "空表!\n";
+        else
         {
-            cout << current->data << " ";
-            current = current->next;
+            while (p->next != NULL)
+            {
+                cout << p->data << "-->";
+                p = p->next;
+            }
+            cout << p->data << endl;
         }
-        cout << "}" << endl;
     }
 
 private:
     int num_node;
     LinkNode<T> *head;
 };
+
+template <typename T>
+void Union(LinkList<T> &A, LinkList<T> &B, LinkList<T> &C)
+{
+    LinkNode<T> *current = A.getHead()->next;
+    if (current != NULL)
+        C = A;
+    current = B.getHead()->next;
+    if (current != NULL)
+    {
+        while (current != NULL)
+        {
+            if (A.search(current->data) == NULL)
+            {
+                LinkNode<T> *newnode = new LinkNode<T>(current->data);
+                if (newnode == NULL)
+                {
+                    cerr << "Memory space apply failed.";
+                    exit(-1);
+                }
+                if (C.getLast() == NULL)
+                    C.getHead()->next = newnode;
+                else
+                    C.getLast()->next = newnode;
+                C.setNum(C.getNum() + 1);
+            }
+            current = current->next;
+        }
+    }
+}
+template <typename T>
+void Intersection(LinkList<T> &A, LinkList<T> &B, LinkList<T> &C)
+{
+    Union(A, B, C);
+    LinkNode<T> *current = C.getHead()->next;
+    LinkNode<T> *del;
+    T x;
+    if (current != NULL)
+    {
+        while (current != NULL)
+        {
+            if (!((A.search(current->data) != NULL) && (B.search(current->data) != NULL)))
+            {
+                LinkNode<T> *cmp = current->next;
+                C.del(C.locate_num(current->data), x);
+                current = cmp;
+                continue;
+            }
+            current = current->next;
+        }
+    }
+}
+
+template <typename T>
+void tidyup(LinkList<T> &L)
+{
+    LinkNode<T> *p = L.getHead()->next;
+    if (p == NULL)
+        return;
+    while (p != NULL)
+    {
+        if (p->data == p->next->data)
+        {
+            while (p->data == p->next->data)
+            {
+                LinkNode<T> *del = p->next;
+                p->next = del->next;
+                delete del;
+                L.setNum(L.getNum() - 1);
+                if (p->next == NULL)
+                    return;
+            }
+        }
+        p = p->next;
+    }
+}
+
+int main()
+{
+    LinkList<int> A;
+    A.inputRear(-1);
+    A.output();
+    tidyup(A);
+    A.output();
+    cin.get();
+    cin.get();
+    return 0;
+}
