@@ -97,6 +97,7 @@ public:
         }
         newnode->next = current->next;
         current->next = newnode;
+        num_node++;
         return true;
     }
     bool del(int i, T &x)
@@ -108,6 +109,7 @@ public:
         current->next = delnode->next;
         x = delnode->data;
         delete delnode;
+        num_node--;
         return true;
     }
     bool isEmpty { return (head->next == NULL ? true : false); }
@@ -139,6 +141,7 @@ public:
             }
             last->next = newnode;
             last = newnode;
+            num_node++;
             cin >> value;
         }
     }
