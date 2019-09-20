@@ -1,4 +1,5 @@
 #include "iostream"
+
 using namespace std;
 
 template <typename T>
@@ -110,7 +111,7 @@ public:
         return true;
     }
     bool isEmpty { return (head->next == NULL ? true : false); }
-    void claer()
+    void clear()
     {
         LinkNode<T> *cp;
         while (head->next != NULL)
@@ -121,9 +122,36 @@ public:
         }
         num_node = 0;
     }
-    void input() {}
-    void output(){
-        LinkNode<T> *current = head->} LinkList(LinkList<T> &L)
+    void input(T END_TAG)
+    {
+        LinkNode<T> *newnode, *last;
+        T value;
+        clear();
+        cin >> value;
+        last = head;
+        while (value != END_TAG)
+        {
+            newnode = new LinkNode<T>(value);
+            if (newnode == NULL)
+            {
+                cerr << "Memory space apply failed.";
+                exit(-1);
+            }
+            last->next = newnode;
+            last = newnode;
+            cin >> value;
+        }
+    }
+    void output()
+    {
+        LinkNode<T> *current = head->next;
+        while (current != NULL)
+        {
+            cout << currrent->data << endl;
+            current = current->next;
+        }
+    }
+    LinkList(LinkList<T> &L)
     {
         T value;
         num_node = L.getNum();
