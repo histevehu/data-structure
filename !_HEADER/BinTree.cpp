@@ -94,7 +94,7 @@ public:
         }
     }
 
-    BinTreeNode<T> *root()
+    BinTreeNode<T> *getRoot()
     {
         return root;
     }
@@ -125,6 +125,13 @@ public:
         return tmp_root;
     }
 
+    void visit(BinTreeNode<T> *node)
+    {
+        if (node != NULL)
+        {
+            cout << node->data << " ";
+        }
+    }
     void preOrder(BinTreeNode<T> *subTree)
     {
         if (subTree != NULL)
@@ -138,25 +145,24 @@ public:
     {
         if (subTree != NULL)
         {
-            preOrder(subTree->left);
+            midOrder(subTree->left);
             visit(subTree);
-            preOrder(subTree->right);
+            midOrder(subTree->right);
         }
     }
     void postOrder(BinTreeNode<T> *subTree)
     {
         if (subTree != NULL)
         {
-            preOrder(subTree->left);
-            preOrder(subTree->right);
+            postOrder(subTree->left);
+            postOrder(subTree->right);
             visit(subTree);
         }
     }
 
-    bool operator==(const BinTree<T> &t1, const BinTree<T> &t2)
+    bool operator==(BinTree<T> &t)
     {
-
-        return (equal(t1.root(), t2.root()) ? true : false);
+        return (equal(root, t.getRoot()) ? true : false);
     }
 
     bool equal(BinTreeNode<T> *n1, BinTreeNode<T> *n2)
@@ -168,9 +174,9 @@ public:
         else
             return false;
     }
+    BinTreeNode<T> *root;
 
 protected:
-    BinTreeNode *root;
     T inEOF;
     BinTreeNode<T> *parent(BinTreeNode<T> *subTree, BinTreeNode<T> *tgt)
     {
