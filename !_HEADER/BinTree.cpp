@@ -30,8 +30,26 @@ public:
     }
     ~BinTree() { destroy(root); }
 
-    void create()
+    void create(BinTreeNode<T> *&subTree)
     {
+        T item;
+        if (!cin.eof())
+        {
+            cin >> item;
+            if (item != inEOF)
+            {
+                subTree = new BinTreeNode<T>(item);
+                if (subTree == NULL)
+                {
+                    cerr << "Space Allocation ERROR!" << endl;
+                    exit(-1);
+                }
+                create(subTree->left);
+                create(subTree->right);
+            }
+            else
+                subTree = NULL;
+        }
     }
 
     bool isEmpty()
@@ -59,13 +77,20 @@ public:
         }
     }
 
-    void print(BinTreeNode<T> *subTree)
+    void prePrint(BinTreeNode<T> *subTree)
     {
         if (subTree != NULL)
         {
             cout << subTree->data << " ";
-            print(subTree->left);
-            print(subTree->right);
+            if (subTree->left != NULL || subTree->right != NULL)
+            {
+                cout << '(';
+                prePrint(subTree->left);
+                cout << ',';
+                if (subTree->right != NULL)
+                    prePrint(subTree->right);
+                cout << ')';
+            }
         }
     }
 
@@ -98,6 +123,34 @@ public:
         tmp_root->left = copy(subTree->left);
         tmp_root->right = copy(subTree->right);
         return tmp_root;
+    }
+
+    void preOrder(BinTreeNode<T> *subTree)
+    {
+        if (subTree != NULL)
+        {
+            visit(subTree);
+            preOrder(subTree->left);
+            preOrder(subTree->right);
+        }
+    }
+    void midOrder(BinTreeNode<T> *subTree)
+    {
+        if (subTree != NULL)
+        {
+            preOrder(subTree->left);
+            visit(subTree);
+            preOrder(subTree->right);
+        }
+    }
+    void postOrder(BinTreeNode<T> *subTree)
+    {
+        if (subTree != NULL)
+        {
+            preOrder(subTree->left);
+            preOrder(subTree->right);
+            visit(subTree);
+        }
     }
 
     bool operator==(const BinTree<T> &t1, const BinTree<T> &t2)
