@@ -84,13 +84,11 @@ public:
     void print()
     {
         Stack_Node<T> *p = top;
-        cout << "[";
         while (p != NULL)
         {
-            cout << p->data << " ";
+            cout << p->data;
             p = p->next;
         }
-        cout << "]" << endl;
     }
 
 private:

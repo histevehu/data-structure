@@ -91,7 +91,19 @@ public:
         }
         cout << endl;
     }
+    Queue<T> operator=(Queue<T> &L)
+    {
+        first = NULL;
+        last = NULL;
+        QueueNode<T> *p = L.first;
+        while (p != NULL)
+        {
+            enQueue(p->data);
+            p = p->next;
+        }
+    }
 
 protected:
-    QueueNode<T> *first, *last;
+    QueueNode<T> *first,
+        *last;
 };

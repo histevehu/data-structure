@@ -1,6 +1,101 @@
 #include "iostream"
-#include "Queue.cpp"
 using namespace std;
+
+template <typename T>
+struct QueueNode
+{
+    T data;
+    QueueNode *next;
+    QueueNode(QueueNode<T> *p = NULL) { next = p; }
+    QueueNode(const T &item, QueueNode<T> *p = NULL)
+    {
+        data = item;
+        next = p;
+    }
+};
+template <typename T>
+class Queue
+{
+public:
+    Queue()
+    {
+        first = NULL;
+        last = NULL;
+    }
+    bool enQueue(const T &x)
+    {
+        if (first == NULL)
+        {
+            first = last = new QueueNode<T>(x);
+            if (first == NULL)
+                return false;
+        }
+        else
+        {
+            last->next = new QueueNode<T>(x);
+            if (last->next == NULL)
+                return false;
+            last = last->next;
+        }
+        return true;
+    }
+    bool deQueue(T &x)
+    {
+        if (isEmpty())
+            return false;
+        QueueNode<T> *p = first;
+        x = p->data;
+        first = first->next;
+        return true;
+    }
+    bool getFirst(T &x)
+    {
+        if (isEmpty())
+            return false;
+        x = first->data;
+        return true;
+    }
+    int getSize()
+    {
+        QueueNode<T> *p = first;
+        int k = 0;
+        while (p != NULL)
+        {
+            p = p->next;
+            k++;
+        }
+        return k;
+    }
+    bool isEmpty()
+    {
+        return (first == NULL ? true : false);
+    }
+    void clear()
+    {
+        QueueNode<T> *p;
+        while (first != NULL)
+        {
+            p = first;
+            first = first->next;
+            delete p;
+        }
+    }
+    void print()
+    {
+        QueueNode<T> *p = first;
+        int k = 0;
+        while (p != NULL)
+        {
+            cout << p->data << " ";
+            p = p->next;
+            k++;
+        }
+        cout << endl;
+    }
+
+protected:
+    QueueNode<T> *first, *last;
+};
 
 template <typename T>
 struct BinTreeNode
@@ -53,18 +148,6 @@ public:
         }
     }
 
-    void createFullBinTree(BinTreeNode<T> *&subTree, char data[], int pos, int upper)
-    {
-        if (data[pos] == '#' || pos > upper - 1)
-            subTree = NULL;
-        else
-        {
-            subTree = new BinTreeNode<T>(data[pos]);
-            createFullBinTree(subTree->left, data, 2 * pos, upper);
-            createFullBinTree(subTree->right, data, 2 * pos + 1, upper);
-        }
-    }
-
     bool isEmpty()
     {
         return (root == NULL) ? true : false;
@@ -104,24 +187,6 @@ public:
                     prePrint(subTree->right);
                 cout << ')';
             }
-        }
-    }
-
-    void treePicPrePrint()
-    {
-        treePicPrePrint(1, root);
-    }
-    void treePicPrePrint(int i, BinTreeNode<T> *subTree)
-    {
-        if (subTree != NULL)
-        {
-            for (int j = 1; j <= i; j++)
-                cout << "-";
-            visit(subTree);
-            cout << endl;
-            int k = ++i;
-            treePicPrePrint(k, subTree->left);
-            treePicPrePrint(k, subTree->right);
         }
     }
 
@@ -239,3 +304,11 @@ protected:
             return parent(subTree->right, tgt);
     }
 };
+int main()
+{
+    BinTree<char> b1('#');
+    b1.create(b1.root);
+    b1.levelOrder(b1.root);
+    cin.get();
+    cin.get();
+}

@@ -1,5 +1,6 @@
 #include "iostream"
-#include "Queue.cpp"
+#include "string"
+#include "cstring"
 using namespace std;
 
 template <typename T>
@@ -53,15 +54,15 @@ public:
         }
     }
 
-    void createFullBinTree(BinTreeNode<T> *&subTree, char data[], int pos, int upper)
+    void CreateBiTree(BinTreeNode<T> *&subTree, char data[], int pos, int upper)
     {
         if (data[pos] == '#' || pos > upper - 1)
             subTree = NULL;
         else
         {
             subTree = new BinTreeNode<T>(data[pos]);
-            createFullBinTree(subTree->left, data, 2 * pos, upper);
-            createFullBinTree(subTree->right, data, 2 * pos + 1, upper);
+            CreateBiTree(subTree->left, data, 2 * pos, upper);
+            CreateBiTree(subTree->right, data, 2 * pos + 1, upper);
         }
     }
 
@@ -117,7 +118,10 @@ public:
         {
             for (int j = 1; j <= i; j++)
                 cout << "-";
-            visit(subTree);
+            if (subTree != NULL)
+            {
+                cout << subTree->data;
+            }
             cout << endl;
             int k = ++i;
             treePicPrePrint(k, subTree->left);
@@ -191,23 +195,6 @@ public:
         }
     }
 
-    void levelOrder(BinTreeNode<T> *subTree)
-    {
-        Queue<BinTreeNode<T> *> Q;
-        BinTreeNode<T> *p = root;
-        Q.enQueue(p);
-        while (!Q.isEmpty())
-        {
-
-            Q.deQueue(p);
-            visit(p);
-            if (p->left != NULL)
-                Q.enQueue(p->left);
-            if (p->right != NULL)
-                Q.enQueue(p->right);
-        }
-    }
-
     bool operator==(BinTree<T> &t)
     {
         return (equal(root, t.getRoot()) ? true : false);
@@ -239,3 +226,21 @@ protected:
             return parent(subTree->right, tgt);
     }
 };
+
+int main()
+{
+    BinTree<char> b1('#');
+    string str;
+    cin >> str;
+    char *c;
+    const int len = str.length();
+    c = new char[len + 1];
+    strcpy(c, str.c_str());
+
+    b1.CreateBiTree(b1.root, c, 1, len);
+    b1.preOrder(b1.root);
+    cout << endl;
+    b1.midOrder(b1.root);
+    cin.get();
+    cin.get();
+}
