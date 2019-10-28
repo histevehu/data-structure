@@ -1,4 +1,5 @@
 #include "iostream"
+#include "Queue.cpp"
 using namespace std;
 
 template <typename T>
@@ -94,6 +95,24 @@ public:
         }
     }
 
+    void treePicPrePrint()
+    {
+        treePicPrePrint(1, root);
+    }
+    void treePicPrePrint(int i, BinTreeNode<T> *subTree)
+    {
+        if (subTree != NULL)
+        {
+            for (int j = 1; j <= i; j++)
+                cout << "-";
+            visit(subTree);
+            cout << endl;
+            int k = ++i;
+            treePicPrePrint(k, subTree->left);
+            treePicPrePrint(k, subTree->right);
+        }
+    }
+
     BinTreeNode<T> *getRoot()
     {
         return root;
@@ -157,6 +176,23 @@ public:
             postOrder(subTree->left);
             postOrder(subTree->right);
             visit(subTree);
+        }
+    }
+
+    void levelOrder(BinTreeNode<T> *subTree)
+    {
+        Queue<BinTreeNode<T> *> Q;
+        BinTreeNode<T> *p = root;
+        Q.enQueue(p);
+        while (!Q.isEmpty())
+        {
+
+            Q.deQueue(p);
+            visit(p);
+            if (p->left != NULL)
+                Q.enQueue(p->left);
+            if (p->right != NULL)
+                Q.enQueue(p->right);
         }
     }
 
