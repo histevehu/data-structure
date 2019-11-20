@@ -45,15 +45,6 @@ public:
         delete p;
         return true;
     }
-
-    bool getTop(T &x)
-    {
-        if (isEmpty())
-            return false;
-        Stack_Node<T> *p = top;
-        x = p->data;
-    }
-
     bool del()
     {
         if (isEmpty())

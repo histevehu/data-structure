@@ -224,60 +224,9 @@ public:
             return false;
     }
 
-    void find(T item)
-    {
-        findPointer = NULL;
-        CMProot = root;
-        isFind = false;
-        find(root, item);
-    }
-    BinTreeNode<T> *find(BinTreeNode<T> *root, T item)
-    {
-        if (root != NULL)
-        {
-            if (item == root->data)
-            {
-                isFind = true;
-                findPointer = root;
-                return root;
-            }
-            else
-            {
-                BinTreeNode<T> *cmp = NULL;
-                cmp = find(root->left, item);
-                if (cmp != NULL)
-                {
-                    //                   findPointer = root->left;
-                    isFind = true;
-                    return cmp;
-                }
-                cmp = find(root->right, item);
-                if (cmp != NULL)
-                {
-                    //                   findPointer = root->right;
-                    isFind = true;
-                    return cmp;
-                }
-
-                return NULL;
-            }
-        }
-        else
-        {
-            return NULL;
-        }
-    }
-    BinTreeNode<T> *findPointer;
-    BinTreeNode<T> *CMProot;
-
 protected:
     T inEOF;
     BinTreeNode<T> *root;
-    bool isFullFlag;
-    int treeHeight;
-    bool bottomBlank;
-    bool isFind;
-
     BinTreeNode<T> *parent(BinTreeNode<T> *subTree, BinTreeNode<T> *tgt)
     {
         if (subTree == NULL)
@@ -285,7 +234,7 @@ protected:
         if (subTree->left == tgt || subTree->right == tgt)
             return subTree;
         BinTreeNode<T> *p;
-        if ((p = parent(subTree->left, tgt)) != NULL)
+        if (p == parent(subTree->left, tgt) != NULL)
             return p;
         else
             return parent(subTree->right, tgt);

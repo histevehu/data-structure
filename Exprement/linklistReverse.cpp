@@ -3,6 +3,111 @@
 using namespace std;
 
 template <typename T>
+struct Stack_Node
+{
+    T data;
+    Stack_Node *next;
+    Stack_Node(Stack_Node<T> *p = NULL) { next = p; }
+    Stack_Node(const T &item, Stack_Node<T> *p = NULL)
+    {
+        data = item;
+        next = p;
+    }
+};
+
+template <typename T>
+class Stack
+{
+public:
+    Stack() { top = NULL; }
+    Stack(T din) { top = new Stack_Node<T>(din); }
+    ~Stack() { clear(); }
+    bool push(const T &x)
+    {
+        Stack_Node<T> *item = new Stack_Node<T>(x);
+        if (item == NULL)
+            return false;
+        if (top == NULL)
+            top = item;
+        else
+        {
+            item->next = top;
+            top = item;
+        }
+        return true;
+    }
+    bool pop(T &x)
+    {
+        if (isEmpty())
+            return false;
+        Stack_Node<T> *p = top;
+        top = top->next;
+        x = p->data;
+        delete p;
+        return true;
+    }
+
+    bool getTop(T &x)
+    {
+        if (isEmpty())
+            return false;
+        Stack_Node<T> *p = top;
+        x = p->data;
+    }
+
+    bool del()
+    {
+        if (isEmpty())
+            return false;
+        Stack_Node<T> *p = top;
+        top = top->next;
+        delete p;
+        return true;
+    }
+    bool isEmpty() { return (top == NULL); }
+    int getSize()
+    {
+        if (isEmpty())
+            return 0;
+        Stack_Node<T> *p = top;
+        int count = 0;
+        while (p != NULL)
+        {
+            count++;
+            p = p->next;
+        }
+        return count;
+    }
+    bool clear()
+    {
+        if (isEmpty())
+            return true;
+        Stack_Node<T> *p;
+        while (top != NULL)
+        {
+            p = top;
+            top = top->next;
+            delete p;
+        }
+        return true;
+    }
+    void print()
+    {
+        Stack_Node<T> *p = top;
+        cout << "[";
+        while (p != NULL)
+        {
+            cout << p->data << " ";
+            p = p->next;
+        }
+        cout << "]" << endl;
+    }
+
+private:
+    Stack_Node<T> *top;
+};
+
+template <typename T>
 struct LinkNode
 {
     T data;
@@ -242,16 +347,39 @@ public:
     void output()
     {
         LinkNode<T> *current = head->next;
-        cout << "{ ";
         while (current != NULL)
         {
             cout << current->data << " ";
             current = current->next;
         }
-        cout << "}" << endl;
+        cout << endl;
     }
 
 private:
     int num_node;
     LinkNode<T> *head;
 };
+
+using namespace std;
+int main()
+{
+    LinkList<int> l1;
+    Stack<int> s1;
+    l1.inputRear(-1);
+    l1.output();
+    int cmp, k = 0;
+    while (l1.getData(k++, cmp) && k <= l1.getNum())
+    {
+        s1.push(cmp);
+    }
+    l1.clear();
+    k = 1;
+    while (s1.isEmpty() == false)
+    {
+        s1.pop(cmp);
+        l1.inputRear(-1, cmp);
+    }
+    l1.output();
+    cin.get();
+    cin.get();
+}

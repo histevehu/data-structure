@@ -1,6 +1,101 @@
 #include "iostream"
-#include "Queue.cpp"
 using namespace std;
+
+template <typename T>
+struct QueueNode
+{
+    T data;
+    QueueNode *next;
+    QueueNode(QueueNode<T> *p = NULL) { next = p; }
+    QueueNode(const T &item, QueueNode<T> *p = NULL)
+    {
+        data = item;
+        next = p;
+    }
+};
+template <typename T>
+class Queue
+{
+public:
+    Queue()
+    {
+        first = NULL;
+        last = NULL;
+    }
+    bool enQueue(const T &x)
+    {
+        if (first == NULL)
+        {
+            first = last = new QueueNode<T>(x);
+            if (first == NULL)
+                return false;
+        }
+        else
+        {
+            last->next = new QueueNode<T>(x);
+            if (last->next == NULL)
+                return false;
+            last = last->next;
+        }
+        return true;
+    }
+    bool deQueue(T &x)
+    {
+        if (isEmpty())
+            return false;
+        QueueNode<T> *p = first;
+        x = p->data;
+        first = first->next;
+        return true;
+    }
+    bool getFirst(T &x)
+    {
+        if (isEmpty())
+            return false;
+        x = first->data;
+        return true;
+    }
+    int getSize()
+    {
+        QueueNode<T> *p = first;
+        int k = 0;
+        while (p != NULL)
+        {
+            p = p->next;
+            k++;
+        }
+        return k;
+    }
+    bool isEmpty()
+    {
+        return (first == NULL ? true : false);
+    }
+    void clear()
+    {
+        QueueNode<T> *p;
+        while (first != NULL)
+        {
+            p = first;
+            first = first->next;
+            delete p;
+        }
+    }
+    void print()
+    {
+        QueueNode<T> *p = first;
+        int k = 0;
+        while (p != NULL)
+        {
+            cout << p->data << " ";
+            p = p->next;
+            k++;
+        }
+        cout << endl;
+    }
+
+protected:
+    QueueNode<T> *first, *last;
+};
 
 template <typename T>
 struct BinTreeNode
@@ -79,6 +174,7 @@ public:
             return 1 + size(subTree->left) + size(subTree->right);
     }
 
+    int height() { height(root); }
     int height(BinTreeNode<T> *subTree)
     {
         if (subTree == NULL)
@@ -192,7 +288,7 @@ public:
         }
     }
 
-    void levelOrder(BinTreeNode<T> *subTree)
+    void levelOrder()
     {
         Queue<BinTreeNode<T> *> Q;
         BinTreeNode<T> *p = root;
@@ -222,6 +318,58 @@ public:
             return true;
         else
             return false;
+    }
+    bool isFullBinTree()
+    {
+        isFullFlag = true;
+        treeHeight = height();
+        bottomBlank = false;
+        isFullBinTree(root);
+    }
+    bool isFullBinTree(BinTreeNode<T> *node)
+    {
+        if (node != NULL)
+        {
+            if (height(node) != 2)
+            {
+                if ((node->left == NULL && node->right == NULL) || isFullBinTree(node->left) && isFullBinTree(node->right))
+                {
+                    isFullFlag = true;
+                    return true;
+                }
+                if (node->left == NULL || node->right == NULL)
+                {
+                    isFullFlag = false;
+                    return false;
+                }
+            }
+            else
+            {
+                if ((node->right != NULL && node->left == NULL) || bottomBlank == true)
+                {
+                    isFullFlag = false;
+                    return false;
+                }
+                else
+                {
+                    if (node->right == NULL && node->left != NULL)
+                        bottomBlank = true;
+                    isFullFlag = true;
+                    return true;
+                }
+            }
+            if (node == root)
+            {
+                if (isFullFlag)
+                    return true;
+                else
+                    return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
     }
 
     void find(T item)
@@ -269,15 +417,75 @@ public:
     }
     BinTreeNode<T> *findPointer;
     BinTreeNode<T> *CMProot;
+    void levelNum(BinTreeNode<T> *root, int *a)
+    {
+        for (int i = 0; i <= height(root) + 1; i++)
+        {
+            a[i] = 0;
+        }
+        if (root != NULL)
+            a[0] = 1;
+        else
+            return;
+        Queue<BinTreeNode<T> *> Q;
+        Queue<int> level;
+        int q_level = 0;
+        BinTreeNode<T> *p = root;
+        Q.enQueue(p);
+        level.enQueue(0);
+        while (!Q.isEmpty())
+        {
+
+            Q.deQueue(p);
+            level.deQueue(q_level);
+            //          visit(p);
+            if (p->left != NULL)
+            {
+
+                a[q_level + 1]++;
+                /*
+                cout << p->left->data << " ";
+                for (int i = 0; i < height(); i++)
+                {
+                    cout << a[i] << " ";
+                }
+                cout << endl;*/
+                Q.enQueue(p->left);
+                level.enQueue(q_level + 1);
+            }
+            if (p->right != NULL)
+            {
+                a[q_level + 1]++;
+                /*cout << p->right->data << " ";
+                for (int i = 0; i < height(); i++)
+                {
+                    cout << a[i] << " ";
+                }
+                cout << endl;*/
+                Q.enQueue(p->right);
+                level.enQueue(q_level + 1);
+            }
+        }
+    }
+    template <typename C>
+    C getArrMax(C *a, int len)
+    {
+        C max = a[0];
+        for (int i = 0; i < len; i++)
+        {
+            if (a[i] > max)
+                max = a[i];
+        }
+        return max;
+    }
 
 protected:
     T inEOF;
-    BinTreeNode<T> *root;
     bool isFullFlag;
     int treeHeight;
     bool bottomBlank;
     bool isFind;
-
+    BinTreeNode<T> *root;
     BinTreeNode<T> *parent(BinTreeNode<T> *subTree, BinTreeNode<T> *tgt)
     {
         if (subTree == NULL)
@@ -291,3 +499,27 @@ protected:
             return parent(subTree->right, tgt);
     }
 };
+
+int main()
+{
+    BinTree<char> b1('#');
+    b1.create();
+    cin.get();
+    int levelNum[b1.height()];
+    /*   cout << b1.height() << endl;
+	cout << b1.height(b1.getRoot()->left) << endl;
+	cout << b1.height(b1.getRoot()->left->left) << endl;
+	cout << b1.height(b1.getRoot()->left->right) << endl;
+	cout << b1.height(b1.getRoot()->left->right->left) << endl;
+	cout << b1.height(b1.getRoot()->left->right->right) << endl;
+	cout << b1.height(b1.getRoot()->left->right->left->right) << endl;*/
+    b1.levelNum(b1.getRoot(), levelNum);
+    /*for (int i = 0; i < b1.height(); i++)
+    {
+        cout << levelNum[i] << " ";
+    }
+    cout << endl;*/
+    cout << b1.getArrMax(levelNum, b1.height());
+    cin.get();
+    cin.get();
+}

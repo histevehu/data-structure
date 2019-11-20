@@ -1,6 +1,101 @@
 #include "iostream"
-#include "Queue.cpp"
 using namespace std;
+
+template <typename T>
+struct QueueNode
+{
+    T data;
+    QueueNode *next;
+    QueueNode(QueueNode<T> *p = NULL) { next = p; }
+    QueueNode(const T &item, QueueNode<T> *p = NULL)
+    {
+        data = item;
+        next = p;
+    }
+};
+template <typename T>
+class Queue
+{
+public:
+    Queue()
+    {
+        first = NULL;
+        last = NULL;
+    }
+    bool enQueue(const T &x)
+    {
+        if (first == NULL)
+        {
+            first = last = new QueueNode<T>(x);
+            if (first == NULL)
+                return false;
+        }
+        else
+        {
+            last->next = new QueueNode<T>(x);
+            if (last->next == NULL)
+                return false;
+            last = last->next;
+        }
+        return true;
+    }
+    bool deQueue(T &x)
+    {
+        if (isEmpty())
+            return false;
+        QueueNode<T> *p = first;
+        x = p->data;
+        first = first->next;
+        return true;
+    }
+    bool getFirst(T &x)
+    {
+        if (isEmpty())
+            return false;
+        x = first->data;
+        return true;
+    }
+    int getSize()
+    {
+        QueueNode<T> *p = first;
+        int k = 0;
+        while (p != NULL)
+        {
+            p = p->next;
+            k++;
+        }
+        return k;
+    }
+    bool isEmpty()
+    {
+        return (first == NULL ? true : false);
+    }
+    void clear()
+    {
+        QueueNode<T> *p;
+        while (first != NULL)
+        {
+            p = first;
+            first = first->next;
+            delete p;
+        }
+    }
+    void print()
+    {
+        QueueNode<T> *p = first;
+        int k = 0;
+        while (p != NULL)
+        {
+            cout << p->data << " ";
+            p = p->next;
+            k++;
+        }
+        cout << endl;
+    }
+
+protected:
+    QueueNode<T> *first, *last;
+};
 
 template <typename T>
 struct BinTreeNode
@@ -79,6 +174,7 @@ public:
             return 1 + size(subTree->left) + size(subTree->right);
     }
 
+    int height() { height(root); }
     int height(BinTreeNode<T> *subTree)
     {
         if (subTree == NULL)
@@ -223,6 +319,58 @@ public:
         else
             return false;
     }
+    bool isFullBinTree()
+    {
+        isFullFlag = true;
+        treeHeight = height();
+        bottomBlank = false;
+        isFullBinTree(root);
+    }
+    bool isFullBinTree(BinTreeNode<T> *node)
+    {
+        if (node != NULL)
+        {
+            if (height(node) != 2)
+            {
+                if ((node->left == NULL && node->right == NULL) || isFullBinTree(node->left) && isFullBinTree(node->right))
+                {
+                    isFullFlag = true;
+                    return true;
+                }
+                if (node->left == NULL || node->right == NULL)
+                {
+                    isFullFlag = false;
+                    return false;
+                }
+            }
+            else
+            {
+                if ((node->right != NULL && node->left == NULL) || bottomBlank == true)
+                {
+                    isFullFlag = false;
+                    return false;
+                }
+                else
+                {
+                    if (node->right == NULL && node->left != NULL)
+                        bottomBlank = true;
+                    isFullFlag = true;
+                    return true;
+                }
+            }
+            if (node == root)
+            {
+                if (isFullFlag)
+                    return true;
+                else
+                    return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
 
     void find(T item)
     {
@@ -272,12 +420,11 @@ public:
 
 protected:
     T inEOF;
-    BinTreeNode<T> *root;
     bool isFullFlag;
     int treeHeight;
     bool bottomBlank;
     bool isFind;
-
+    BinTreeNode<T> *root;
     BinTreeNode<T> *parent(BinTreeNode<T> *subTree, BinTreeNode<T> *tgt)
     {
         if (subTree == NULL)
@@ -291,3 +438,48 @@ protected:
             return parent(subTree->right, tgt);
     }
 };
+
+int main()
+{
+    BinTree<char> b1('#');
+    b1.create();
+    cin.get();
+    char c;
+    cin.get(c);
+    b1.find(c);
+    if (b1.findPointer != NULL)
+    {
+        if (b1.parent(b1.findPointer) != NULL)
+        {
+            cout << b1.parent(b1.findPointer)->data << endl;
+        }
+        else
+        {
+            cout << "NULL\n";
+        }
+        if (b1.findPointer->left != NULL)
+        {
+            cout << b1.findPointer->left->data << endl;
+        }
+        else
+        {
+            cout << "NULL\n";
+        }
+        if (b1.findPointer->right != NULL)
+        {
+            cout << b1.findPointer->right->data << endl;
+        }
+        else
+        {
+            cout << "NULL";
+        }
+    }
+    else
+    {
+        cout << "NULL\n";
+        cout << "NULL\n";
+        cout << "NULL";
+    }
+    cin.get();
+    cin.get();
+}

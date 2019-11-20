@@ -1,6 +1,101 @@
 #include "iostream"
-#include "Queue.cpp"
 using namespace std;
+
+template <typename T>
+struct QueueNode
+{
+    T data;
+    QueueNode *next;
+    QueueNode(QueueNode<T> *p = NULL) { next = p; }
+    QueueNode(const T &item, QueueNode<T> *p = NULL)
+    {
+        data = item;
+        next = p;
+    }
+};
+template <typename T>
+class Queue
+{
+public:
+    Queue()
+    {
+        first = NULL;
+        last = NULL;
+    }
+    bool enQueue(const T &x)
+    {
+        if (first == NULL)
+        {
+            first = last = new QueueNode<T>(x);
+            if (first == NULL)
+                return false;
+        }
+        else
+        {
+            last->next = new QueueNode<T>(x);
+            if (last->next == NULL)
+                return false;
+            last = last->next;
+        }
+        return true;
+    }
+    bool deQueue(T &x)
+    {
+        if (isEmpty())
+            return false;
+        QueueNode<T> *p = first;
+        x = p->data;
+        first = first->next;
+        return true;
+    }
+    bool getFirst(T &x)
+    {
+        if (isEmpty())
+            return false;
+        x = first->data;
+        return true;
+    }
+    int getSize()
+    {
+        QueueNode<T> *p = first;
+        int k = 0;
+        while (p != NULL)
+        {
+            p = p->next;
+            k++;
+        }
+        return k;
+    }
+    bool isEmpty()
+    {
+        return (first == NULL ? true : false);
+    }
+    void clear()
+    {
+        QueueNode<T> *p;
+        while (first != NULL)
+        {
+            p = first;
+            first = first->next;
+            delete p;
+        }
+    }
+    void print()
+    {
+        QueueNode<T> *p = first;
+        int k = 0;
+        while (p != NULL)
+        {
+            cout << p->data << " ";
+            p = p->next;
+            k++;
+        }
+        cout << endl;
+    }
+
+protected:
+    QueueNode<T> *first, *last;
+};
 
 template <typename T>
 struct BinTreeNode
@@ -224,60 +319,9 @@ public:
             return false;
     }
 
-    void find(T item)
-    {
-        findPointer = NULL;
-        CMProot = root;
-        isFind = false;
-        find(root, item);
-    }
-    BinTreeNode<T> *find(BinTreeNode<T> *root, T item)
-    {
-        if (root != NULL)
-        {
-            if (item == root->data)
-            {
-                isFind = true;
-                findPointer = root;
-                return root;
-            }
-            else
-            {
-                BinTreeNode<T> *cmp = NULL;
-                cmp = find(root->left, item);
-                if (cmp != NULL)
-                {
-                    //                   findPointer = root->left;
-                    isFind = true;
-                    return cmp;
-                }
-                cmp = find(root->right, item);
-                if (cmp != NULL)
-                {
-                    //                   findPointer = root->right;
-                    isFind = true;
-                    return cmp;
-                }
-
-                return NULL;
-            }
-        }
-        else
-        {
-            return NULL;
-        }
-    }
-    BinTreeNode<T> *findPointer;
-    BinTreeNode<T> *CMProot;
-
 protected:
     T inEOF;
     BinTreeNode<T> *root;
-    bool isFullFlag;
-    int treeHeight;
-    bool bottomBlank;
-    bool isFind;
-
     BinTreeNode<T> *parent(BinTreeNode<T> *subTree, BinTreeNode<T> *tgt)
     {
         if (subTree == NULL)
@@ -285,9 +329,24 @@ protected:
         if (subTree->left == tgt || subTree->right == tgt)
             return subTree;
         BinTreeNode<T> *p;
-        if ((p = parent(subTree->left, tgt)) != NULL)
+        if (p == parent(subTree->left, tgt) != NULL)
             return p;
         else
             return parent(subTree->right, tgt);
     }
 };
+
+int main()
+{
+    BinTree<char> b1('#');
+    BinTree<char> b2('#');
+    b1.create();
+    cin.get();
+    b2.create();
+    if (b1 == b2)
+        printf("equal");
+    else
+        printf("not equal");
+    cin.get();
+    cin.get();
+}
